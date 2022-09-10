@@ -16,7 +16,7 @@ The scripts download emotes from BetterTTV, FrankerFaceZ and 7TV and sync to Dis
 
 #### 1. Set up the server array
 
-For Array Sync, it's required to setup an array of server first. Create as many servers as it's needed to accomodate the emotes (like ~10 of them). It's recommended to put them into a folder and place the folder on top so that the emotes in the array show up as the default (as opposed to e.g. `:Pog~1:`)
+For Array Sync, it's required to setup an array of server first. Create as many servers as it's needed to accomodate the emotes (like ~10 of them). It's recommended to put them into a folder and place the folder on top so that the emotes in the array show up as the default (as opposed to e.g. `:Pog~1:`).
 
 #### 2. Configure `config.json`
 
