@@ -9,7 +9,9 @@ This is a collection of miscellaneous utils. No concrete development plans.
 `array_sync.py` `guild_sync.py`
 
 The scripts download emotes from BetterTTV, FrankerFaceZ and 7TV and sync to Discord servers.
+
 **Array Sync** syncs to an array of servers such that with Nitro privilleges in mind you can use the Twitch emotes everywhere.
+
 **Guild Sync** syncs to a specific server and makes them (the static ones 😟) available for everyone.
 
 ## Setup
