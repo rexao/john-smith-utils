@@ -2,9 +2,9 @@
 
 This is a collection of miscellaneous utils. No concrete development plans.
 
-## Summary
+## Emote Sync Utils
 
-### Emote Sync Utils
+### Summary
 
 `array_sync.py` `guild_sync.py`
 
