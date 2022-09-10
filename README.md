@@ -12,7 +12,7 @@ The scripts download emotes from BetterTTV, FrankerFaceZ and 7TV and sync to Dis
 **Array Sync** syncs to an array of servers such that with Nitro privileges in mind you can use the Twitch emotes everywhere.
 **Guild Sync** syncs to a specific server and makes them (the static ones 😟) available for everyone.
 
-## Setup
+### Setup
 
 #### 1. Set up the server array
 
