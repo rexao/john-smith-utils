@@ -26,7 +26,7 @@ It's recommended to put them into a folder and place the folder on top so that t
 
 #### 2. Configure `config.json`
 
-`"twitch_uid"` : Twitch user ID. Tools that convert Twitch user names into UID are available online.
+`"twitch_uid"` : Twitch user ID. Tools that convert Twitch usernames into UID are available online.
 
 `"stv_uid"` : 7TV user ID. The ID can be found in the URL of an 7TV user page.
 
