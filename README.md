@@ -36,7 +36,7 @@ It's recommended to put the array servers into a folder and place the folder on 
 
 `"target_guilds"` : Key in the server IDs and the respective emoji limit (default 50) for each category. (For Guild Sync)
 
-#### 3. ulimit -Sn
+#### 3. For macOS: `ulimit -Sn`
 
 On macOS (confirmed on Big Sur 11.7), the limit on the number of file descriptors a process may have defaults to 256 and causes the scripts to raise `OSError: [Errno 24] Too many open files` in my testing. They run for me at 2000 but feel free to set it to whatever that fits your case.
 
