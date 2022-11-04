@@ -27,13 +27,13 @@ Tips: put the array servers into a folder and place the folder on the topmost so
 
 #### 2. Configure `config.json`
 
-| Key | Value |
-|--|--|
-| `"twitch_uid"` | Twitch user ID. Tools that convert Twitch usernames into UID are available online. |
-| `"stv_uid"` | 7TV user ID. The ID can be found in the URL of an 7TV user page. |
-| `"js_token"` | Discord bot token. |
-| `"labo_array"` | Key in the server IDs. (For Array Sync) |
-| `"target_guilds"` | Key in the server IDs and the respective emoji limit (default 50) for each category. (For Guild Sync) |
+| Key | Data Type | Value |
+|--|--|--|
+| `"twitch_uid"` | number | Twitch user ID. Tools that convert Twitch usernames into UID are available online. |
+| `"stv_uid"` | string | 7TV user ID. The ID can be found in the URL of an 7TV user page. |
+| `"js_token"` | string | Discord bot token. |
+| `"labo_array"` | objects of string key, number value inside array | Key in the server IDs. (For Array Sync) |
+| `"target_guilds"` | objects of string key, number value inside array | Key in the server IDs and the respective emoji limit (default 50) for each category. (For Guild Sync) |
 
 #### 3. For macOS: `ulimit -Sn`
 
