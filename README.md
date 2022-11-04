@@ -35,3 +35,11 @@ It's recommended to put the array servers into a folder and place the folder on 
 `"labo_array"` : Key in the server IDs. (For Array Sync)
 
 `"target_guilds"` : Key in the server IDs and the respective emoji limit (default 50) for each category. (For Guild Sync)
+
+#### 3. ulimit -Sn 2000
+
+On macOS (confirmed on Big Sur 11.7), the limit on the number of file descriptors a process may have defaults to 256. The scripts raise `OSError: [Errno 24] Too many open files` in my testing with the default. They run for me with it set to 2000 but feel free to set it to whatever that works.
+
+`ulimit -Sn 2000`
+
+See also: https://www.ibm.com/docs/en/aix/7.2?topic=u-ulimit-command
