@@ -34,4 +34,4 @@ It's recommended to put the array servers into a folder and place the folder on 
 
 `"labo_array"` : Key in the server IDs. (For Array Sync)
 
-`"target_guilds"` : Key in the server IDs and the respective emoji limit for each category (The default is 50). (For Guild Sync)
+`"target_guilds"` : Key in the server IDs and the respective emoji limit (default 50) for each category. (For Guild Sync)
