@@ -20,7 +20,7 @@ The scripts download emotes from BetterTTV, FrankerFaceZ and 7TV and sync to Dis
 
 For Array Sync, it's required to setup an array of server on Discord first. 
 
-Create as many servers as needed to accommodate the emotes (like ~10 of them). 
+Create as many servers as needed to accommodate the emotes (~10 of them). 
 
 It's recommended to put the array servers into a folder and place the folder on the topmost so that the emotes in the array show up as the default (as opposed to e.g. `:Pog~1:`).
 
