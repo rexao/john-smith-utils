@@ -4,49 +4,49 @@
     "js_token": "",
     "labo_array": [
         {
-            "id": 
+            "id": null
         },
         {
-            "id": 
+            "id": null
         },
         {
-            "id": 
+            "id": null
         },
         {
-            "id": 
+            "id": null
         },
         {
-            "id": 
+            "id": null
         },
         {
-            "id": 
+            "id": null
         },
         {
-            "id": 
+            "id": null
         },
         {
-            "id": 
+            "id": null
         },
         {
-            "id": 
+            "id": null
         }
     ],
     "target_guilds": [
         {
-            "id": ,
-            "emoji_limit": 
+            "id": null,
+            "emoji_limit": null
         },
         {
-            "id": ,
-            "emoji_limit": 
+            "id": null,
+            "emoji_limit": null
         },
         {
-            "id": ,
-            "emoji_limit": 
+            "id": null,
+            "emoji_limit": null
         },
         {
-            "id": ,
-            "emoji_limit": 
+            "id": null,
+            "emoji_limit": null
         }
     ]
 }
