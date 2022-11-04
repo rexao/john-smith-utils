@@ -1,135 +1,187 @@
 import asyncio
 import json
 import os
-import shutil
 import time
+from typing import List
 
-from main import BetterTTV, Discord, FrankerFaceZ, now
+from main import (
+    DiscordEmote, DiscordGuild,
+    BetterTTV, FrankFaceZ,
+    ThirdPartyEmote, BetterTTVEmote, FrankerFaceZEmote,
+    divider, timestamp
+)
+
 
 
 async def main():
-    target_guild_id = [input('Enter guild ID: ')]
-    target_guild_emoji_limit = int(input('Enter guild emoji limit: '))
-
+    
     with open('config.json', 'r') as cfg:
         config = json.load(cfg)
     twitch_uid = config['twitch_uid']
     js_token = config['js_token']
+    target_guilds = [DiscordGuild(
+        js_token=js_token, id=guild['id'], emoji_limit=guild['emoji_limit']
+    ) for guild in config['target_guilds']]
+    
+    bttv_channel = BetterTTV(base_dir='guild-sync-emotes', twitch_uid=twitch_uid)
+    ffz = FrankFaceZ(base_dir='guild-sync-emotes', twitch_uid=twitch_uid)
 
-    print('\033[90m'+u'\u2500'*32+'\033[0m')
-    print(f"{now()} Downloading BetterTTV channel emotes...")
-    bttv_channel = BetterTTV(twitch_uid=twitch_uid)
-    bttv_channel.dir = f'emotes_guild/BetterTTV/{twitch_uid}'
-    if os.path.exists(bttv_channel.dir):
-        shutil.rmtree(bttv_channel.dir)
-    os.makedirs(bttv_channel.dir)
-    bttv_channel_emotes = await bttv_channel.get_json()
-    bttv_channel_downloads = [bttv_channel.download_emote(emote) for emote in bttv_channel_emotes]
+    print(divider)
+    print(f"{timestamp()} Downloading BetterTTV channel emotes...")
+    bttv_channel_json = await bttv_channel.get_json()
+    bttv_channel_emotes: List[BetterTTVEmote] = []
+    for json_dict in bttv_channel_json:
+        bttv_channel_emotes.append(await BetterTTVEmote().read_from_json(json=json_dict))
+    bttv_channel_downloads = [emote.download_emote(dir=bttv_channel.dir) for emote in bttv_channel_emotes]
     await asyncio.gather(*bttv_channel_downloads)
 
-    print('\033[90m'+u'\u2500'*32+'\033[0m')
-    print(f"{now()} Downloading FrankerFaceZ channel emotes...")
-    ffz_channel = FrankerFaceZ(twitch_uid=twitch_uid)
-    ffz_channel.dir = f'emotes_guild/FrankerFaceZ/{twitch_uid}'
-    if os.path.exists(ffz_channel.dir):
-        shutil.rmtree(ffz_channel.dir)
-    os.makedirs(ffz_channel.dir)
-    ffz_channel_emotes = await ffz_channel.get_json()
-    ffz_channel_downloads = [ffz_channel.download_emote(emote) for emote in ffz_channel_emotes]
-    await asyncio.gather(*ffz_channel_downloads)
+    print(divider)
+    print(f"{timestamp()} Downloading FrankerFaceZ channel emotes...")
+    ffz_json = await ffz.get_json()
+    ffz_emotes: List[FrankerFaceZEmote] = []
+    for json_dict in ffz_json:
+        ffz_emotes.append(await FrankerFaceZEmote().read_from_json(json=json_dict))
+    ffz_downloads = [emote.download_emote(dir=ffz.dir) for emote in ffz_emotes]
+    await asyncio.gather(*ffz_downloads)
 
-    print('\033[90m'+u'\u2500'*32+'\033[0m')
-    print(f"{now()} Trimming emote library...")
-    bttv_channel_trimming = [bttv_channel.keep_largest_qualified(emote=emote) for emote in bttv_channel_emotes]
-    await asyncio.gather(*bttv_channel_trimming)
+
+    print(divider)
+    print(f"{timestamp()} Trimming emote library...")
+    bttv_channel_emote_files: List[ThirdPartyEmote] = []
+    for emote in os.listdir(bttv_channel.dir):
+        emote_path = f"{bttv_channel.dir}/{emote}"
+        emote = ThirdPartyEmote().read_from_path(emote_path)
+        bttv_channel_emote_files.append(emote)
+    bttv_channel_emote_ids = set([emote.id for emote in bttv_channel_emote_files])
+    for id in bttv_channel_emote_ids:
+        emote_variants = [emote for emote in bttv_channel_emote_files if emote.id==id]
+        qualified_size = [
+            variant.file_size for variant in emote_variants
+            if variant.file_size<=262144
+        ]
+        qualified_size = max(qualified_size) if qualified_size else None
+        for variant in emote_variants:
+            if variant.file_size!=qualified_size:
+                variant.delete()
+    bttv_channel_emote_files: List[ThirdPartyEmote] = []
+    for emote in os.listdir(bttv_channel.dir):
+        emote_path = f"{bttv_channel.dir}/{emote}"
+        emote = ThirdPartyEmote().read_from_path(emote_path)
+        bttv_channel_emote_files.append(emote)
     
-    emote_syncs, animated_emote_syncs = [], []
-    for emote in ffz_channel_emotes:
-        search = [
-            f"{ffz_channel.dir}/{file}" for file in os.listdir(ffz_channel.dir)
-            if file.startswith(f"{emote['code']}_{emote['id']}")
+    ffz_emote_files: List[ThirdPartyEmote] = []
+    for emote in os.listdir(ffz.dir):
+        emote_path = f"{ffz.dir}/{emote}"
+        emote = ThirdPartyEmote().read_from_path(emote_path)
+        ffz_emote_files.append(emote)
+    ffz_emote_ids = set([emote.id for emote in ffz_emote_files])
+    for id in ffz_emote_ids:
+        emote_variants = [emote for emote in ffz_emote_files if emote.id==id]
+        qualified_size = [
+            variant.file_size for variant in emote_variants
+            if variant.file_size<=262144
         ]
-        if not search:
-            continue
-        emote_syncs.append({
-            "name": emote['code'],
-            "image_path": search[-1]
-        })
-    for emote in bttv_channel_emotes:
-        search = [
-            f"{bttv_channel.dir}/{file}" for file in os.listdir(bttv_channel.dir)
-            if file.startswith(f"{emote['code']}_{emote['id']}")
-        ]
-        if not search:
-            continue
-        content = {
-            "name": emote['code'],
-            "image_path": search[-1]
-        }
-        if emote['imageType'] == 'png':
-            emote_syncs.append(content)
-        elif emote['imageType'] == 'gif':
-            animated_emote_syncs.append(content)
-        
-    discord = Discord(js_token=js_token, labo_array=target_guild_id)
-    for idx, guild in enumerate(discord.array):
-        start, end = idx*target_guild_emoji_limit, idx*target_guild_emoji_limit+target_guild_emoji_limit
-        guild_emojis = await discord.get_gulid_emojis(guild_id=guild)
-        before_list = [emoji for emoji in guild_emojis if not emoji['animated']]
-        animated_before_list = [emoji for emoji in guild_emojis if emoji['animated']]
-        after_list = emote_syncs[start:end]
-        animated_after_list = animated_emote_syncs[start:end]
-        # print('guild_emojis', guild, guild_emojis)
-        # print('before_list', guild, before_list)
-        # print('animated_before_list', guild, animated_before_list)
-        # print('after_list', guild, after_list)
-        # print('animated_after_list', guild, animated_after_list)
+        qualified_size = max(qualified_size) if qualified_size else None
+        for variant in emote_variants:
+            if variant.file_size!=qualified_size:
+                variant.delete()
+    ffz_emote_files: List[ThirdPartyEmote] = []
+    for emote in os.listdir(ffz.dir):
+        emote_path = f"{ffz.dir}/{emote}"
+        emote = ThirdPartyEmote().read_from_path(emote_path)
+        ffz_emote_files.append(emote)
+    
 
-        delete_list = [
-            emoji for emoji in before_list
-            if emoji['name'] not in [emote['name'] for emote in after_list]
-        ]
-        animated_delete_list = [
-            emoji for emoji in animated_before_list
-            if emoji['name'] not in [emote['name'] for emote in animated_after_list]
-        ]
-        upload_list = [
-            emote for emote in after_list
-            if emote['name'] not in [emoji['name'] for emoji in before_list]
-        ]
-        animated_upload_list = [
-            emote for emote in animated_after_list
-            if emote['name'] not in [emoji['name'] for emoji in animated_before_list]
-        ]
+    for guild in target_guilds:
 
-        print('\033[90m'+u'\u2500'*32+'\033[0m')
-        print(f"""{now()} Processing guild {guild} - deleting: {
-            [emoji['name'] for emoji in delete_list] + [emoji['name'] for emoji in animated_delete_list]
-        }""")
-        await asyncio.gather(*[
-            discord.delete_emote(guild_id=guild, emoji_name=emoji['name'], emoji_id=emoji['id'])
-            for emoji in delete_list
-        ])
-        await asyncio.gather(*[
-            discord.delete_emote(guild_id=guild, emoji_name=emoji['name'], emoji_id=emoji['id'])
-            for emoji in animated_delete_list
-        ])
+        print(divider)
+        print(f"{timestamp()} Processing guild {guild.id} (max {guild.emoji_limit}+{guild.emoji_limit} emotes)...")
+        guild_emojis_json = await guild.get_gulid_emojis()
+        guild_emotes = [DiscordEmote().read_from_json(json=json_dict) for json_dict in guild_emojis_json]
+        # guild_static_emotes = [emote for emote in guild_emotes if not emote.animated]
+        # guild_animated_emotes = [emote for emote in guild_emotes if emote.animated]
         
-        print(f"""{now()} Processing guild {guild} - posting: {
-            [emote['name'] for emote in upload_list] + [emote['name'] for emote in animated_upload_list]
-        }""")
-        await asyncio.gather(*[
-            discord.upload_emote(guild_id=guild, emote_name=emote['name'], emote_image_path=emote['image_path'])
-            for emote in upload_list
-        ])
-        await asyncio.gather(*[
-            discord.upload_emote(guild_id=guild, emote_name=emote['name'], emote_image_path=emote['image_path'])
-            for emote in animated_upload_list
-        ])
+        new_static_emotes: List[ThirdPartyEmote] = []
+        new_animated_emotes: List[ThirdPartyEmote] = []
+        for emote in ffz_emotes:
+            emote_file = [emote_file for emote_file in ffz_emote_files if emote_file.id==str(emote.id)]
+            if len(emote_file)>1:
+                raise ValueError('Trimming unclean!!')
+            if emote_file[0].animated:
+                new_animated_emotes += emote_file
+            else:
+                new_static_emotes += emote_file
+        for emote in bttv_channel_emotes:
+            emote_file = [emote_file for emote_file in bttv_channel_emote_files if emote_file.id==str(emote.id)]
+            if len(emote_file)>1:
+                raise ValueError('Trimming unclean!!')
+            if emote_file[0].animated:
+                new_animated_emotes += emote_file
+            else:
+                new_static_emotes += emote_file
+        new_emotes = new_static_emotes[:guild.emoji_limit]+new_animated_emotes[:guild.emoji_limit]
+
+        old_emotes: List[ThirdPartyEmote] = []
+        if os.path.exists(ffz.archive_dir):
+            for emote in os.listdir(ffz.archive_dir):
+                emote_path = f"{ffz.archive_dir}/{emote}"
+                old_emotes.append(
+                    ThirdPartyEmote().read_from_path(emote_path)
+                )
+        if os.path.exists(bttv_channel.archive_dir):
+            for emote in os.listdir(bttv_channel.archive_dir):
+                emote_path = f"{bttv_channel.archive_dir}/{emote}"
+                old_emotes.append(
+                    ThirdPartyEmote().read_from_path(emote_path)
+                )
+
+        emote_modifies: List[ThirdPartyEmote] = []
+        for emote in new_emotes:
+            if (
+                emote.code in [old_emote.code for old_emote in old_emotes] and
+                emote.id not in [old_emote.id for old_emote in old_emotes if old_emote.code==emote.code]
+            ):
+                emote_modifies.append(emote)
+        modify_deletes = [
+            guild.delete_emote(id=emote.id, name=emote.name)
+            for emote in guild_emotes
+            if emote.name in [emote.code for emote in emote_modifies]
+        ]
+        await asyncio.gather(*modify_deletes)
+        modify_uploads = [
+            guild.upload_emote(name=emote.code, image=await emote.get_uri())
+            for emote in emote_modifies
+        ]
+        await asyncio.gather(*modify_uploads)
+
+        emote_deletes: List[DiscordEmote] = [
+            emote for emote in guild_emotes
+            if emote.name not in [emote.code for emote in new_emotes]
+        ]
+        deletes = [
+            guild.delete_emote(id=emote.id, name=emote.name) 
+            for emote in emote_deletes
+        ]
+        await asyncio.gather(*deletes)
+
+        emote_posts: List[ThirdPartyEmote] = [
+            emote for emote in new_emotes
+            if emote.code not in [emote.name for emote in guild_emotes]
+        ]
+        posts = [
+            guild.upload_emote(name=emote.code, image=await emote.get_uri())
+            for emote in emote_posts
+        ]
+        await asyncio.gather(*posts)
+
+
+        
+
+
 
 if __name__ == "__main__":
     start_time = time.time()
     asyncio.run(main())
-    print('\033[90m'+u'\u2500'*32+'\033[0m')
+    print(divider)
     print(f"Elapsed time: {time.time()-start_time}s")
-    print('\033[90m'+u'\u2500'*32+'\033[0m')
+    print(divider)

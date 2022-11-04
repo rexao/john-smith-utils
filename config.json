@@ -3,14 +3,50 @@
     "stv_uid": "",
     "js_token": "",
     "labo_array": [
-        {"id": ""},
-        {"id": ""},
-        {"id": ""},
-        {"id": ""},
-        {"id": ""},
-        {"id": ""},
-        {"id": ""},
-        {"id": ""},
-        {"id": ""}
+        {
+            "id": 
+        },
+        {
+            "id": 
+        },
+        {
+            "id": 
+        },
+        {
+            "id": 
+        },
+        {
+            "id": 
+        },
+        {
+            "id": 
+        },
+        {
+            "id": 
+        },
+        {
+            "id": 
+        },
+        {
+            "id": 
+        }
+    ],
+    "target_guilds": [
+        {
+            "id": ,
+            "emoji_limit": 
+        },
+        {
+            "id": ,
+            "emoji_limit": 
+        },
+        {
+            "id": ,
+            "emoji_limit": 
+        },
+        {
+            "id": ,
+            "emoji_limit": 
+        }
     ]
 }

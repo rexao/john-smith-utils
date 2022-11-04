@@ -12,7 +12,7 @@ The scripts download emotes from BetterTTV, FrankerFaceZ and 7TV and sync to Dis
 
 **Array Sync** syncs to an array of servers such that with Nitro privileges in mind you can use the Twitch emotes everywhere.
 
-**Guild Sync** syncs to a specific server and makes them (the static ones 😟) available for everyone.
+**Guild Sync** syncs to a specific server and makes them (the non-animated ones 😟) available for everyone.
 
 ### Setup
 
@@ -20,7 +20,7 @@ The scripts download emotes from BetterTTV, FrankerFaceZ and 7TV and sync to Dis
 
 For Array Sync, it's required to setup an array of server on Discord first. 
 
-Create as many servers as it's needed to accommodate the emotes (like ~10 of them). 
+Create as many servers as needed to accommodate the emotes (like ~10 of them). 
 
 It's recommended to put the array servers into a folder and place the folder on the topmost so that the emotes in the array show up as the default (as opposed to e.g. `:Pog~1:`).
 
@@ -32,4 +32,6 @@ It's recommended to put the array servers into a folder and place the folder on 
 
 `"js_token"` : Discord bot token.
 
-`"labo_array"` : Key in the server IDs. (Only required for Array Sync)
+`"labo_array"` : Key in the server IDs. (For Array Sync)
+
+`"target_guilds"` : Key in the server IDs and the respective emoji limit. (For Guild Sync)
