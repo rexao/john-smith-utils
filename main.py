@@ -18,6 +18,12 @@ divider = '\033[90m'+u'\u2500'*32+'\033[0m'
 def timestamp():
     return f"\033[90m{datetime.datetime.now().strftime('%H:%M:%S')}\033[0m"
 
+async def sleep_before_next_minute():
+    current_time = datetime.datetime.now()
+    target_time = current_time.replace(second=0)+datetime.timedelta(minutes=1)
+    # print((target_time-current_time).total_seconds())
+    await asyncio.sleep((target_time-current_time).total_seconds())
+
 
 class DiscordGuild():
     def __init__(
@@ -345,7 +351,7 @@ class BetterTTVEmote(ThirdPartyEmote):
                 async with aiofiles.open(path, mode='wb') as file:
                     response = await session.get(url=f"https://cdn.betterttv.net/emote/{self.id}/{size}x")
                     if response.status != 200:
-                        raise ValueError(f"{timestamp()} Error: response status code NOT 200 for {self.code} {size}x")
+                        raise ValueError(f"{timestamp()} Error: response status code NOT 200 (is {response.status}) for {self.code} {size}x")
                     response_read = await response.read()
                     await file.write(response_read)
                     print(f"{timestamp()} {self.code} {size}x is downloaded.")
@@ -386,7 +392,7 @@ class FrankerFaceZEmote(ThirdPartyEmote):
                 async with aiofiles.open(path, mode='wb') as file:
                     response = await session.get(url=self.images[size])
                     if response.status != 200:
-                        raise ValueError(f"{timestamp()} Error: response status code NOT 200 for {self.code} {size}x")
+                        raise ValueError(f"{timestamp()} Error: response status code NOT 200 (is {response.status}) for {self.code} {size}x")
                     response_read = await response.read()
                     await file.write(response_read)
                     print(f"{timestamp()} {self.code} {size} is downloaded.")
@@ -442,11 +448,18 @@ class SevenTVEmote(ThirdPartyEmote):
                 size: str = url_list[0]
                 url: str = url_list[1]
                 path = f"{dir}/{self.id}_{self.code}_{size}.{url.split('.')[-1]}"
-                async with aiofiles.open(path, mode='wb') as file:
+                response = await session.get(url=url)
+                while response.status == 429:
+                    print(f"{timestamp()} {self.code} {size}x download returned 429. (Sleeping before the next minute.)")
+                    await sleep_before_next_minute()
                     response = await session.get(url=url)
-                    if response.status != 200:
-                        raise ValueError(f"{timestamp()} Error: response status code NOT 200 for {self.code} {size}x")
-                    response_read = await response.read()
+                if response.status != 200:
+                    raise ValueError(
+                        f"{timestamp()} Error: response status code NOT 200 (is {response.status}) for {self.code} {size}x"+
+                        f"\n{response.content}"
+                    )
+                response_read = await response.read()
+                async with aiofiles.open(path, mode='wb') as file:
                     await file.write(response_read)
                     print(f"{timestamp()} {self.code} {size}x is downloaded.")
                 return_list.append(ThirdPartyEmote().read_from_path(path=path))
