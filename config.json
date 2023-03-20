@@ -1,52 +1,94 @@
 {
-    "twitch_uid": null,
-    "stv_uid": "",
-    "js_token": "",
-    "labo_array": [
-        {
-            "id": null
-        },
-        {
-            "id": null
-        },
-        {
-            "id": null
-        },
-        {
-            "id": null
-        },
-        {
-            "id": null
-        },
-        {
-            "id": null
-        },
-        {
-            "id": null
-        },
-        {
-            "id": null
-        },
-        {
-            "id": null
-        }
-    ],
-    "target_guilds": [
-        {
-            "id": null,
-            "emoji_limit": null
-        },
-        {
-            "id": null,
-            "emoji_limit": null
-        },
-        {
-            "id": null,
-            "emoji_limit": null
-        },
-        {
-            "id": null,
-            "emoji_limit": null
-        }
-    ]
+    "twitch": {
+        "uid": 
+    },
+    "bttv": {
+        "api": "https://api.betterttv.net/3/",
+        "cdn": "https://cdn.betterttv.net/"
+    },
+    "ffz": {
+        "api": "https://api.frankerfacez.com",
+        "cdn": "https://cdn.frankerfacez.com"
+    },
+    "stv": {
+        "api": "https://7tv.io/v3"
+    },
+    "discord": {
+        "api": "https://discord.com/api",
+        "bot_token": "",
+        "guild_array": [
+            {
+                "id": 
+            },
+            {
+                "id": 
+            },
+            {
+                "id": 
+            },
+            {
+                "id": 
+            },
+            {
+                "id": 
+            },
+            {
+                "id": 
+            },
+            {
+                "id": 
+            },
+            {
+                "id": 
+            },
+            {
+                "id": 
+            },
+            {
+                "id": 
+            },
+            {
+                "id": 
+            },
+            {
+                "id": 
+            },
+            {
+                "id": 
+            },
+            {
+                "id": 
+            },
+            {
+                "id": 
+            },
+            {
+                "id": 
+            },
+            {
+                "id": 
+            },
+            {
+                "id": 
+            }
+        ],
+        "destination_guilds": [
+            {
+                "id": ,
+                "emoji_limit": 50
+            },
+            {
+                "id": ,
+                "emoji_limit": 50
+            },
+            {
+                "id": ,
+                "emoji_limit": 50
+            },
+            {
+                "id": ,
+                "emoji_limit": 100
+            }
+        ]
+    }
 }
